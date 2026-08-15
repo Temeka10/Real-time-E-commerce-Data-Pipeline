@@ -1,0 +1,4 @@
+confluent-kafka
+Faker
+azure-storage-blob
+python-dotenv

@@ -1,0 +1,27 @@
+services:
+  # ==========================================
+  # 1. APACHE KAFKA (Офіційний образ Confluent для розробки)
+  # ==========================================
+  kafka:
+    image: confluentinc/confluent-local:7.5.0
+    ports:
+      - "9092:9092"
+
+  # ==========================================
+  # 2. APACHE AIRFLOW (Легкий режим Standalone)
+  # ==========================================
+  airflow:
+    image: apache/airflow:2.8.1-python3.10
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _AIRFLOW_DB_UPGRADE=True
+      - _AIRFLOW_WWW_USER_CREATE=True
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+      - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-snowflake
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+    command: standalone
