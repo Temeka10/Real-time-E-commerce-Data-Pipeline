@@ -1,0 +1,37 @@
+name: Data Pipeline CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # 1. БЛОК CI (Перевірка) - те, що ми вже написали
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - run: pip install flake8
+    - run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  # 2. БЛОК CD (Розгортання) - додаємо зараз
+  deploy-to-production:
+    # НАЙВАЖЛИВІШИЙ РЯДОК: Запускати ТІЛЬКИ якщо перевірка (CI) пройшла успішно
+    needs: build-and-test 
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Приклад: Відправляємо оновлені файли на сервер (імітація)
+    - name: Deploy to Server
+      env:
+        # Безпечно дістаємо пароль від сервера (не пишемо його в коді!)
+        SERVER_PASSWORD: ${{ secrets.PROD_SERVER_PASSWORD }}
+      run: |
+        echo "Підключаємось до сервера..."
+        echo "Копіюємо нові DAG-файли для Airflow..."
+        echo "Успішно розгорнуто в Production!"
